@@ -31,13 +31,6 @@ class EnvObserver:
         # detect start screen
         self.detect_start_screen()
 
-        #part = cv2.imread(self.BIRD_UP_PART, cv2.IMREAD_COLOR)
-
-        # im = self.capture_color()
-        #
-        # bird_space = im[self.scr_root_pos[0]+206:self.scr_root_pos[0]+216] \
-        # [self.scr_root_pos[1]:self.scr_root_pos[1]+548][:]
-
         self.detect_bird_pos()
 
 
@@ -86,26 +79,10 @@ class EnvObserver:
 
             start_time = time.time()
 
-            im = self.capture_color()
+            bbox = (self.scr_root_pos[0] + 109, self.scr_root_pos[1],
+                    self.scr_root_pos[0] + 109 + 4, self.scr_root_pos[1] + 548)
 
-            x_base = self.scr_root_pos[0] + 110
-            y_base = self.scr_root_pos[1]
-
-            bird_space = im[y_base:y_base + 548, x_base:x_base+2, :]
-
-
-            # print (x_base,'->', x_base+10, ';', y_base, '->', y_base + 548)
-            # print ('Mouse position: ', pyautogui.position())
-
-            #print(im.shape)
-            #
-            # x_cl = pyautogui.position()[0]-x_base
-            # y_cl = pyautogui.position()[1]-y_base
-            #
-            # print(x_cl, y_cl)
-            #
-            # if 0 <= x_cl < w  and 0 <= y_cl < h:
-            #     print('Mouse pos color', bird_space[y_cl, x_cl, :])
+            bird_space = self.capture_color(bbox)
 
             bird_color = self.RED_BIRD
 
@@ -158,8 +135,13 @@ class EnvObserver:
 
         return im_gray
 
-    def capture_color(self):
-        im = ImageGrab.grab()
+    def capture_color(self, bbox = None):
+
+        if bbox is None:
+            im = ImageGrab.grab()
+        else:
+            im = ImageGrab.grab(bbox)
+
         im_data = np.asarray(im)
         im_data = cv2.cvtColor(im_data, cv2.COLOR_RGBA2RGB)
 
